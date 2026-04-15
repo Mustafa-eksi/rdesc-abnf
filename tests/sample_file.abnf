@@ -1,4 +1,4 @@
-statement_testing_length = expr semi
+statement = expr semi
 expr = number plus expr
 expr = number
 

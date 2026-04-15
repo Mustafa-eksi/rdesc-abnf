@@ -23,5 +23,8 @@ include $(RDESC_DIR)/rdesc.mk
 grammar.o: grammar.c
 	$(CC) -c -I$(RDESC_INCLUDE_DIR) $< -o $@
 
-main: main.c lexer.c $(RDESC)
+main: src/main.c $(RDESC)
+	$(CC) $(CFLAGS) -I$(RDESC_INCLUDE_DIR) $< $(RDESC) -o $@
+
+test: tests/adder_test.c
 	$(CC) $(CFLAGS) -I$(RDESC_INCLUDE_DIR) $< $(RDESC) -o $@

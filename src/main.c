@@ -28,6 +28,16 @@ void node_printer(FILE *out, const struct rdesc_node *node) {
     }
 }
 
+int tokenizer(char *seminfo, size_t size) {
+    if (size == 1 && seminfo[0] == '=')
+        return 2;
+    if (size == 1 && seminfo[0] == '\n')
+        return 3;
+    if (size == 0) // empty token
+        return 0;
+    return 1;
+}
+
 struct abnf_rule {
     size_t name;
     size_t *expr;
@@ -267,7 +277,7 @@ int main(int argc, char *argv[]) {
                 ABNF_MAX_ALTERNATIVE_COUNT, ABNF_MAX_ALTERNATIVE_SIZE,
                 abnf_grammar) == 0);
     printf("Grammar initialized\n");
-    lexer_init(&l, argv[1], NULL, separators);
+    lexer_init(&l, argv[1], NULL, separators, tokenizer);
     // printf("Source file loaded: %s\n", l.data);
     printf("Source file (%s) size: %ld\n", argv[1], l.data_len);
 

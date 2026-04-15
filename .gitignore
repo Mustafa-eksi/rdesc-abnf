@@ -4,3 +4,4 @@ main
 vendor/
 generated_grammar.h
 adder_grammar.h
+test
