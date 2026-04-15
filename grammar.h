@@ -3,37 +3,37 @@
 
 #define ABNF_PRODUCTION_COUNT 4
 #define ABNF_MAX_ALTERNATIVE_COUNT 2
-#define ABNF_MAX_ALTERNATIVE_SIZE 3
+#define ABNF_MAX_ALTERNATIVE_SIZE 4
 
 /*
- * <Statement> ::= <Expression> ;
- * <Expression> ::= <Number> + <Expression>
- * <Expression> ::= <Number>
+ * <Rule> ::= <ident> = <More-Ident> <crlf>
+ * <More-Ident> ::= <ident> <More-Ident>
+ * <More-Ident> ::= <ident>
  */
 
 enum abnf_tk {
-    TK_NUM = 1,
-    TK_SEMI,
-    TK_PLUS,
+    TK_IDENT = 1,
+    TK_EQUALS,
+    TK_CRLF,
 };
 
 enum abnf_nt {
-    NT_STATEMENT, NT_EXPRESSION
+    NT_RULE, NT_MORE_IDENT
 };
 
 static const struct rdesc_grammar_symbol abnf_grammar[ABNF_PRODUCTION_COUNT]
 [ABNF_MAX_ALTERNATIVE_COUNT + 1][ABNF_MAX_ALTERNATIVE_SIZE  + 1] = {
-// STATEMENT
-    r(NT(EXPRESSION), TK(SEMI)),
-// EXPRESSION
-    r(TK(NUM), TK(PLUS), NT(EXPRESSION)
-alt   TK(NUM))
+// RULE
+    r(TK(IDENT), TK(EQUALS), NT(MORE_IDENT), TK(CRLF)),
+// MORE_IDENT 
+    r(TK(IDENT), NT(MORE_IDENT)
+alt   TK(IDENT))
 };
 
 const char* tk_names[] = {
-    "number", "semicolon", "plus"
+    "identifier", "="
 };
 
 const char* nt_names[] = {
-    "Statement", "Expression"
+    "Rule", "More-Identifiers"
 };

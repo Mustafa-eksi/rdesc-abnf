@@ -2,3 +2,5 @@
 compile_commands.json
 main
 vendor/
+generated_grammar.h
+adder_grammar.h

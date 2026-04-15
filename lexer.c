@@ -37,40 +37,38 @@ int lexer_init(struct lexer *l, char *file_name, char *tokens, bool *separators)
     return 0;
 }
 
-/*
- *  ERROR = 0
- *  TK_NUM = 1
- *  TK_SEMI = 2
- *  TK_PLUS = 3
- */
 uint16_t lexer_next(struct lexer *l) {
     size_t start = l->cursor;
     if (l->cursor >= l->data_len)
         return 0;
-    bool is_num = true;
-    while (l->cursor < l->data_len && isspace(l->data[l->cursor])) {
+    // Skip leading spaces
+    while (l->cursor < l->data_len && l->data[l->cursor] == ' ') {
         l->cursor++;
         start++;
     }
-    while (l->cursor < l->data_len && !l->separators[(size_t)l->data[l->cursor]]) {
-        if (!isdigit(l->data[l->cursor]))
-            is_num = false;
+    // Continue until lexeme end
+    while (l->cursor < l->data_len && !l->separators[(size_t)l->data[l->cursor]] && l->data[l->cursor] != ' ') {
         l->cursor++;
     }
+    // Fixing separator tokens
     if (l->cursor-start == 0 && l->separators[(size_t)l->data[l->cursor]]) {
         l->cursor++;
-        is_num = false;
     }
+
+    // FIXME
     l->cur_seminfo = (char*)malloc(sizeof(char)*(l->cursor-start+1));
     memcpy(l->cur_seminfo, &l->data[start], l->cursor-start);
     l->cur_seminfo[l->cursor-start] = '\0';
-    if (is_num)
-        return 1;
-    if (l->cursor-start == 1 && l->cur_seminfo[0] == ';')
+
+    if (l->cursor-start == 1 && l->cur_seminfo[0] == '=')
         return 2;
-    if (l->cursor-start == 1 && l->cur_seminfo[0] == '+')
+    if (l->cursor-start == 1 && l->cur_seminfo[0] == '\n')
         return 3;
-    return 0;
+    if (l->cursor-start == 0) // empty token
+        return 0;
+
+    // identifier
+    return 1;
 }
 
 void lexer_destroy(struct lexer *l) {
