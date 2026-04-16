@@ -8,15 +8,14 @@
 
 struct lexer {
     char *data;
-    char *tokens;
     char *cur_seminfo;
     bool *separators;
     size_t data_len;
     size_t cursor;
-    int (*tokenizer)(char *seminfo, size_t len);
+    int (*tokenizer)(char *seminfo);
 };
 
-int lexer_init(struct lexer *l, char *file_name, char *tokens, bool *separators, int (*tokenizer)(char *seminfo, size_t len)) {
+int lexer_init(struct lexer *l, char *file_name, bool *separators, int (*tokenizer)(char *seminfo)) {
     if (access(file_name, R_OK) != 0) {
         return -1;
     }
@@ -32,7 +31,6 @@ int lexer_init(struct lexer *l, char *file_name, char *tokens, bool *separators,
 
     l->data_len = length;
     l->cursor = 0;
-    l->tokens = tokens;
     l->separators = separators;
     l->tokenizer = tokenizer;
     fclose(f);
@@ -62,8 +60,10 @@ uint16_t lexer_next(struct lexer *l) {
     memcpy(l->cur_seminfo, &l->data[start], l->cursor-start);
     l->cur_seminfo[l->cursor-start] = '\0';
 
+    if (l->cursor-start == 0 || l->cursor == l->data_len)
+        return 0;
     // move this logic to a callback
-    return l->tokenizer(l->cur_seminfo, l->cursor-start);
+    return l->tokenizer(l->cur_seminfo);
 }
 
 void lexer_destroy(struct lexer *l) {

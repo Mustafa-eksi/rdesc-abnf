@@ -1,4 +1,4 @@
-statement = expr semi
+statement = expr semi crlf
 expr = number plus expr
 expr = number
 

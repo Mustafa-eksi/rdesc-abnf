@@ -28,7 +28,8 @@ void node_printer(FILE *out, const struct rdesc_node *node) {
     }
 }
 
-int tokenizer(char *seminfo, size_t size) {
+int tokenizer(char *seminfo) {
+    size_t size = strlen(seminfo);
     if (size == 1 && seminfo[0] == '=')
         return 2;
     if (size == 1 && seminfo[0] == '\n')
@@ -277,7 +278,7 @@ int main(int argc, char *argv[]) {
                 ABNF_MAX_ALTERNATIVE_COUNT, ABNF_MAX_ALTERNATIVE_SIZE,
                 abnf_grammar) == 0);
     printf("Grammar initialized\n");
-    lexer_init(&l, argv[1], NULL, separators, tokenizer);
+    lexer_init(&l, argv[1], separators, tokenizer);
     // printf("Source file loaded: %s\n", l.data);
     printf("Source file (%s) size: %ld\n", argv[1], l.data_len);
 
@@ -292,7 +293,7 @@ int main(int argc, char *argv[]) {
         // vendor/rdesc/src/common.h
     }
 
-	int pump_res;
+    int pump_res;
     struct abnf_document doc;
     abnf_document_init(&doc);
     while (l.data_len > l.cursor) {

@@ -16,15 +16,12 @@ $(RDESC_DIR)/rdesc.mk:
 # Include the librdesc build system
 include $(RDESC_DIR)/rdesc.mk
 
-# ...
-
-# Use the exported variables in your targets. $(RDESC) points to the static
-# library path.
-grammar.o: grammar.c
-	$(CC) -c -I$(RDESC_INCLUDE_DIR) $< -o $@
-
-main: src/main.c $(RDESC)
+main: src/main.c src/lexer.c src/grammar.h $(RDESC)
 	$(CC) $(CFLAGS) -I$(RDESC_INCLUDE_DIR) $< $(RDESC) -o $@
 
-test: tests/adder_test.c
+test: tests/adder_test.c main
 	$(CC) $(CFLAGS) -I$(RDESC_INCLUDE_DIR) $< $(RDESC) -o $@
+
+clean:
+	rm main
+	rm test
